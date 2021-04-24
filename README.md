@@ -5,4 +5,4 @@ Consists of:
 * bpm2csv.py - got to hate those proprietary lab formats
 * pwplot.py - currently _inop_, plotting tool
 * texutil.py - yay, export sympy (probably more than) to LaTeX table format
-
+* svg_graph - svg graphing lib primary intended for hyd/pneu element movement drawings
