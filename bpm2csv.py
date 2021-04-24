@@ -72,18 +72,18 @@ if args.all:
     for fname in fnames:
         try:
             bpm2csv(fname)
+            if args.verbose:
+                print("{}: converted".format(fname))
         except:
             if args.verbose:
                 print("{}: could not convert".format(fname))
-        if args.verbose:
-            print("{}: converted".format(fname))
 elif args.fname is not None:
     for fname in args.fname:
         try:
             bpm2csv(fname)
+            if args.verbose:
+                print("{}: converted".format(fname))
         except:
             if args.verbose:
                 print("{}: could not convert".format(fname))
-        if args.verbose:
-            print("{}: converted".format(fname))
 
