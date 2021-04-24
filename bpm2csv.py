@@ -46,7 +46,7 @@ def bpm2csv(fname):
 
     # convert to csv
     df = pd.DataFrame(data[0], columns =['M', "occurence"])
-    df.N = np.linspace(-500, 500, 40)
+    df.M = np.linspace(-500, 500, 40)
 
     df2 = pd.DataFrame(data[1], columns =['v', "occurence"])
     df2.v = np.linspace(0, 100, 40)
