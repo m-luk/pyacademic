@@ -33,6 +33,7 @@ class texTex:
     """ Class for TeX data storing """
 
     def __init__(self) -> None:
+        """ Creates/opens the file and zeroes the counter """
         self.f = open("./textex.tex", 'w')
         self.ct = 0
 
@@ -43,10 +44,10 @@ class texTex:
             self.f.writelines(['\n\n',
                                'Line[{}]: {}.'.format(self.ct, title)])
 
-        self.f.writelines('\n\n' + line)
+        self.f.writelines('\n\n' + str(line))
         self.ct += 1
 
-    def addMatrix(self, matrix, title=None, rename_dict=None) -> None:
+    def addMatrix(self, matrix, name = None, title=None, rename_dict=None) -> None:
         """ Adds matrix to file """
 
         line = symMatrixToTex(matrix, clipboard=False)
@@ -59,7 +60,10 @@ class texTex:
             self.f.writelines(['\n\n',
                                'Line[{}]: {}.'.format(self.ct, title)])
 
-        self.f.writelines('\n\n' + line)
+        if name is not None:
+            self.f.writelines('\n\n' + name + ' = ' +  line)
+        else:
+            self.f.writelines('\n\n' + line)
         self.ct += 1
 
     def closeFile(self):

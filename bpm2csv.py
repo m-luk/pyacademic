@@ -2,6 +2,16 @@ import pandas as pd
 import numpy as np
 import glob, os, re
 
+import argparse
+parser = argparse.ArgumentParser(description=".bpm file to csv converter. "
+        "Currently setup for given format of files, no warranties ;)")
+parser.add_argument("fname", nargs='*', help="bpm files selected for conversion", default=None)
+parser.add_argument("-a", "--all", action="store_true", help="Convert all .bpm "
+		"files present in the directory")
+parser.add_argument("-v", "--verbose", action="store_true")
+
+args = parser.parse_args()
+
 def bpm2csv(fname):
     """ function converting bpm file to 2 csv files for M and v histograms """
     data = [[], []] # double array for data collection 
@@ -46,10 +56,12 @@ def bpm2csv(fname):
 
     # convert to csv
     df = pd.DataFrame(data[0], columns =['M', "occurence"])
-    df.M = np.linspace(-500, 500, 40)
+    # df.M = np.linspace(-500, 500, 40)
+    df.M = (df.M - 1) * (1000 / 40) - 475
 
     df2 = pd.DataFrame(data[1], columns =['v', "occurence"])
-    df2.v = np.linspace(0, 100, 40)
+    # df2.v = np.linspace(0, 100, 40)
+    df2.v = (df2.v - 1) * (100 / 40) 
 
     # filename
     fname = fname.split('.')[0]
@@ -57,16 +69,7 @@ def bpm2csv(fname):
     df.to_csv(fname + "_M.csv")
     df2.to_csv(fname + "_v.csv")
 
-import argparse
-parser = argparse.ArgumentParser(description=".bpm file to csv converter. "
-        "Currently setup for given format of files, no warranties ;)")
-parser.add_argument("fname", nargs='*', help="bpm files selected for conversion", default=None)
-parser.add_argument("-a", "--all", action="store_true", help="Convert all .bpm "
-		"files present in the directory")
-parser.add_argument("-v", "--verbose", action="store_true")
-
-args = parser.parse_args()
-
+# interface
 if args.all:
     fnames = glob.glob('*.bpm')
     for fname in fnames:
