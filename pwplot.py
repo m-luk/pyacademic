@@ -15,7 +15,7 @@ plt.rcParams["figure.figsize"] = (25/3.25, 15/3.25)
 plt.rcParams["font.size"] = 11
 
 
-def plot(*args, **kwargs):
+def plot(traces, **kwargs):
     '''
     Basic plot, created from data provided as a list of dictionaries:
 
@@ -40,9 +40,9 @@ def plot(*args, **kwargs):
 
 
     # evaluate traces
-    for trace in args:
-        print(trace)
-        trace = trace_dict_fill_empty(trace)
+    for trace in traces:
+        # print(trace)
+        # trace = trace_dict_fill_empty(trace)
         trace = dotdict(trace)
         
         # main plot
@@ -71,9 +71,12 @@ def plot(*args, **kwargs):
         elif key == 'title':
             plt.title(value)
         # FIXME: this is not good, empty argument does the thing but it shouldn't
-        elif key == 'legend':
+        elif key == 'legend' and value == True:
             plt.legend()
+        elif key == 'grid' and value == True:
+            plt.grid()
 
+    plt.show()
 
 
 def trace_dict_fill_empty(trace):
