@@ -15,7 +15,7 @@ plt.rcParams["figure.figsize"] = (25/3.25, 15/3.25)
 plt.rcParams["font.size"] = 11
 
 
-def plot(traces, **kwargs):
+def plot(*args, **kwargs):
     '''
     Basic plot, created from data provided as a list of dictionaries:
 
@@ -38,8 +38,10 @@ def plot(traces, **kwargs):
             legend (bool): Show legend, default False,
     '''
 
+
     # evaluate traces
-    for trace in traces:
+    for trace in args:
+        print(trace)
         trace = trace_dict_fill_empty(trace)
         trace = dotdict(trace)
         
