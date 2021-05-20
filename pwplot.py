@@ -1,133 +1,96 @@
-import matplotlib.pyplot as plt
+# pwplot.py - quick plotting utilities for my WUT needs.
+# github.com/m-luk - 2021
+
 import pandas as pd
 import numpy as np
-import os
+from numpy.polynomial import Polynomial
+from matplotlib import pyplot as plt
+import matplotlib as mpl
+from pyutils import dotdict
+
+# matplotlib styling
+mpl.rcParams['savefig.dpi'] = 300
+plt.style.use('seaborn-white')
+plt.rcParams["figure.figsize"] = (25/3.25, 15/3.25)
+plt.rcParams["font.size"] = 11
 
 
-def plot_color():
-    # TODO: seperate plot color generation function
-    pass
+def plot(traces, **kwargs):
+    '''
+    Basic plot, created from data provided as a list of dictionaries:
+
+        Parameters:
+            traces (list): List of dicts with plot data and config like:
+                [dict(
+                    x = <x values>,
+                    y = <y values>,
+                    name = <trace name>,
+                    color = <color>
+                    styling = <basic styling such as 'o' or '--'>,
+                    markersize = <size of the marker>,
+                    trendline = <trendline polynomial degree>,
+                    xerr = <value of x error lines>,
+                    yerr = <value of y error lines>,
+                ), ...]
+            title (string): Figure title,
+            xlabel (string): Figure xlabel,
+            ylabel (string): Figure ylabel,
+            legend (bool): Show legend, default False,
+    '''
+
+    # evaluate traces
+    for trace in traces:
+        trace = trace_dict_fill_empty(trace)
+        trace = dotdict(trace)
+        
+        # main plot
+        plt.plot(trace.x, trace.y, trace.styling, color=trace.color, label=trace.name, markersize=trace.markersize)
+           
+        # TODO: trendline styling params
+        # trendline (currently only polynomial approximation)
+        if trace.trendline is not None and trace.trendline > 0:
+            p = Polynomial.fit(trace.x, trace.y, trace.trendline)
+            xx, yy = p.linspace()
+            plt.plot(xx, yy, '--', color=trace.color, alpha=0.6)
+
+        # error bars
+        if trace.xerr or trace.yerr:
+            plt.errorbar(
+                trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr, fmt='none', 
+                color=trace.color
+            )
+
+    # evaluate figure params
+    for key, value in kwargs.items():
+        if key == 'xlabel':
+            plt.xlabel(value)
+        elif key == 'ylabel':
+            plt.ylabel(value)
+        elif key == 'title':
+            plt.title(value)
+        # FIXME: this is not good, empty argument does the thing but it shouldn't
+        elif key == 'legend':
+            plt.legend()
 
 
-def simple_plot(x, y, x_names, y_names, of_format='png', of_size=False, show_grid=False, show_ptlabels=False,
-                approx=False, approx_ord=2):
-    # TODO: non DataFrame plotting solution for quick simple plots
-    pass
 
+def trace_dict_fill_empty(trace):
+    ''' 
+    Returns trace dict with None filled empty positions, if mandatory arguments
+    not submitted returns False 
+    '''
+    trace_keys = set(trace.keys())
+    keys_mandatory = set(['x', 'y'])
+    keys_additional = [
+        "name", "color", "styling", "markersize", "trendline", "xerr", "yerr"
+    ]
 
-def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_name='', data_fnames=None, var_ys=None,
-               var_unicodes=None, var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False,
-               xscale='linear', yscale='linear'):
-    """
-    :param data_fnames: names of files passed via data
-    :param data: DataFrame containing data for plotting
-    :param argum: Plotting argument f(argum)
-    :param argum_unit: unit for argum
-    :param of_format: output file format
-    :param od_name: string added to output directory name
-    :param of_size: size of figure, default: None -> standard pyplot size
-    :param var_ys: variables to plot
-    :param var_unicodes: variable unicode representations
-    :param var_units: variable units
-    :param show_grid:
-    :param show_ptlabels: show points with value at point over them
-    :param approx: approximate plots
-    :param approx_ord: polynomial order for approximation
-    :param xscale:
-    :param yscale:
-    """
+    if not trace_keys.issubset(keys_mandatory):
+        return False
 
-    # availible plot size dict
-    plot_size = {'A4': [8.3, 11.7], 'A4_l': [11.7, 8.3], 'A5_l': [8.3, 11.7 / 2]}
+    for key in keys_additional:
+        if key not in trace_keys:
+            trace[key] = None
+    
+    return trace
 
-    # if var_s not provided use dataframe column values
-    if var_ys is None:
-        var_ys = data[0].columns.values
-
-    # if alternate names not provided use dataframe column names
-    if var_unicodes is None:
-        var_unicodes = var_ys
-
-    # if units not porvided use empty string 
-    if var_units is None:
-        var_units = ['' for i in range(len(var_ys))]
-
-    if od_name is not None:
-        path = 'plots_' + of_format + '_' + od_name + '/'
-    else:
-        path = 'plots_' + of_format + '/'
-
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-    # check if arguments were passed as list
-    if type(argum) == list:
-        # TODO: passing list of arguments
-        pass
-
-    # temporary color solution
-    # TODO: color solution: fix later -> possibly add option to select shades of color for multiple plots
-    colors = ['b', 'g', 'm', 'r']  # temporary solution
-
-    # plotting
-    for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
-
-        # figure size definition
-        if of_size:
-            if of_size in plot_size.keys():
-                plt.figure(figsize=plot_size[of_size])
-            else:
-                print(50 * '=' + '\nNot supported plot size: {}\nUsing pyplot default\n'.format(of_size) + 50 * '=')
-                plt.figure()
-        else:
-            plt.figure()
-
-        print("Plotting {} = f({}) to ".format(s, argum) + path)
-
-        # plot for each dataset
-        for dat, color, dat_name in zip(data, colors, data_fnames):
-            if approx:
-                # plotting point graph
-                plt.plot(dat[argum], dat[s], '.', color=color, label=None)
-
-                x = dat[argum].to_numpy().astype(np.float)
-                y = dat[s].to_numpy().astype(np.float)
-
-                f = np.polyfit(x, y, approx_ord)
-                fp = np.poly1d(f)
-
-                xnew = np.linspace(x.min(), x.max(), 100)
-
-                new_label = '{} aproks. st. {}'.format(dat_name, approx_ord)
-
-                plt.plot(xnew, fp(xnew), color=color, label=new_label)
-
-            else:
-                plt.plot(dat[argum], dat[s], 'b')
-
-        # global plot formatting
-        plt.grid(show_grid)
-
-        plt.xscale(xscale)
-
-        plt.yscale(yscale)
-
-        plt.legend()
-
-        # plot labeling
-        plt.xlabel(argum + ' [{}]'.format(argum_unit))
-        plt.ylabel("{}  [{}]".format(suni, jedn))
-        plt.title("Wykres {} w zależności od {}".format(suni, argum))
-
-        # plot saving
-        # path creation
-        save_path = path + "plot_{}=f({})".format(s, argum)
-        if approx:
-            save_path += '_approx={}'.format(approx_ord)
-
-        # saving
-        plt.savefig(save_path + '.{}'.format(of_format))
-
-        print("Successfully plotted {} = f({})".format(s, argum))
-
-    print("Plotting Finished")
