@@ -36,18 +36,28 @@ def plot(traces, **kwargs):
             xlabel (string): Figure xlabel,
             ylabel (string): Figure ylabel,
             legend (bool): Show legend, default False,
+            savefig (string): if name provided save to <savefig>.png,
+            show (bool): Show figure, default True
     '''
-
 
     # evaluate traces
     for trace in traces:
         # print(trace)
         # trace = trace_dict_fill_empty(trace)
         trace = dotdict(trace)
-        
+
+        # if none supply default params
+        if trace.x is None or trace.y is None:
+            return
+        if trace.styling is None:
+            trace.styling = 'o'
+        if trace.color is None:
+            trace.color = 'tab:blue'
+
         # main plot
-        plt.plot(trace.x, trace.y, trace.styling, color=trace.color, label=trace.name, markersize=trace.markersize)
-           
+        plt.plot(trace.x, trace.y, trace.styling, color=trace.color,
+                 label=trace.name, markersize=trace.markersize)
+
         # TODO: trendline styling params
         # trendline (currently only polynomial approximation)
         if trace.trendline is not None and trace.trendline > 0:
@@ -58,7 +68,7 @@ def plot(traces, **kwargs):
         # error bars
         if trace.xerr or trace.yerr:
             plt.errorbar(
-                trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr, fmt='none', 
+                trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr, fmt='none',
                 color=trace.color
             )
 
@@ -76,7 +86,18 @@ def plot(traces, **kwargs):
         elif key == 'grid' and value == True:
             plt.grid()
 
-    plt.show()
+    kwargs = dotdict(kwargs)
+
+    if 'show' in kwargs.keys():
+        if kwargs['show']:
+           plt.show()
+    else:
+        plt.show()
+    
+    # FIXME: saves empty figure
+    if 'savefig' in kwargs.keys():
+        if kwargs['savefig']:
+            plt.savefig('{}.png'.format(kwargs['savefig']))
 
 
 def trace_dict_fill_empty(trace):
@@ -96,6 +117,5 @@ def trace_dict_fill_empty(trace):
     for key in keys_additional:
         if key not in trace_keys:
             trace[key] = None
-    
-    return trace
 
+    return trace
