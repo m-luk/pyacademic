@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 from pyutils import dotdict
 
-# matplotlib styling
+# matplotlib style
 mpl.rcParams['savefig.dpi'] = 300
 plt.style.use('seaborn-white')
 plt.rcParams["figure.figsize"] = (25/3.25, 15/3.25)
@@ -26,7 +26,7 @@ def plot(traces, **kwargs):
                     y = <y values>,
                     name = <trace name>,
                     color = <color>
-                    styling = <basic styling such as 'o' or '--'>,
+                    style = <basic style such as 'o' or '--'>,
                     markersize = <size of the marker>,
                     trendline = <trendline polynomial degree>,
                     xerr = <value of x error lines>,
@@ -35,8 +35,10 @@ def plot(traces, **kwargs):
             title (string): Figure title,
             xlabel (string): Figure xlabel,
             ylabel (string): Figure ylabel,
+            xlim (tuple): (x_min, x_max),
+            ylim (tuple): (y_min, y_max),
             legend (bool): Show legend, default False,
-            savefig (string): if name provided save to <savefig>.png,
+            savefig (string): if path provided save to <savefig> - user specifies extension,
             show (bool): Show figure, default True
 
         Retruns:
@@ -52,25 +54,28 @@ def plot(traces, **kwargs):
         # if none supply default params
         if trace.x is None or trace.y is None:
             return
-        if trace.styling is None:
-            trace.styling = 'o'
+        if trace.style is None:
+            trace.style = 'o'
         if trace.color is None:
             trace.color = 'tab:blue'
 
+        # create plot objects
+        fig, ax = plt.subplots()
+
         # main plot
-        plt.plot(trace.x, trace.y, trace.styling, color=trace.color,
+        ax.plot(trace.x, trace.y, trace.style, color=trace.color,
                  label=trace.name, markersize=trace.markersize)
 
-        # TODO: trendline styling params
+        # TODO: trendline style params
         # trendline (currently only polynomial approximation)
         if trace.trendline is not None and trace.trendline > 0:
             p = Polynomial.fit(trace.x, trace.y, trace.trendline)
             xx, yy = p.linspace()
-            plt.plot(xx, yy, '--', color=trace.color, alpha=0.6)
+            ax.plot(xx, yy, '--', color=trace.color, alpha=0.6)
 
         # error bars
         if trace.xerr or trace.yerr:
-            plt.errorbar(
+            ax.errorbar(
                 trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr, fmt='none',
                 color=trace.color
             )
@@ -78,35 +83,41 @@ def plot(traces, **kwargs):
     # evaluate figure params
     for key, value in kwargs.items():
         if key == 'xlabel':
-            plt.xlabel(value)
+            ax.set_xlabel(value)
         elif key == 'ylabel':
-            plt.ylabel(value)
+            ax.set_ylabel(value)
         elif key == 'title':
-            plt.title(value)
-        # FIXME: this is not good, empty argument does the thing but it shouldn't
-        elif key == 'legend' and value == True:
-            plt.legend()
-        elif key == 'grid' and value == True:
-            plt.grid()
+            ax.set_title(value)
+        elif key == 'xlim':
+            ax.set_xlim(value)
+        elif key == 'ylim':
+            ax.set_ylim(value)
 
-    kwargs = dotdict(kwargs)
+    # show legend, default no
+    if 'legend' in kwargs.keys():
+        if kwargs['legend']:
+            ax.legend()
 
+    # show grid, default yes
+    if 'grid' in kwargs.keys():
+        if kwargs['grid']:
+            ax.grid()
+    else:
+        ax.grid()
+
+    # show figure, default no
     if 'show' in kwargs.keys():
         if kwargs['show']:
-           plt.show()
-    else:
-        plt.show()
+           fig.show()
     
-    # FIXME: saves empty figure
+    # savefig, default no, user provides full path with extension
     if 'savefig' in kwargs.keys():
         if kwargs['savefig']:
-            plt.savefig('{}.png'.format(kwargs['savefig']))
+            fig.savefig('{}'.format(kwargs['savefig']))
 
 
-    # TODO: switch all plt. to fig, ax syntax
     # return figure
-    return plt.gcf()
-
+    return (fig, ax)
 
 def trace_dict_fill_empty(trace):
     ''' 
@@ -116,7 +127,7 @@ def trace_dict_fill_empty(trace):
     trace_keys = set(trace.keys())
     keys_mandatory = set(['x', 'y'])
     keys_additional = [
-        "name", "color", "styling", "markersize", "trendline", "xerr", "yerr"
+        "name", "color", "style", "markersize", "trendline", "xerr", "yerr"
     ]
 
     if not trace_keys.issubset(keys_mandatory):
