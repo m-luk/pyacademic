@@ -24,7 +24,7 @@ def plot(traces, **kwargs):
                 [dict(
                     x = <x values>,
                     y = <y values>,
-                    name = <trace name>,
+                    label = <trace name>,
                     color = <color>
                     style = <basic style such as 'o' or '--'>,
                     markersize = <size of the marker>,
@@ -32,6 +32,7 @@ def plot(traces, **kwargs):
                     xerr = <value of x error lines>,
                     yerr = <value of y error lines>,
                     params = <dict with additional parameteres> 
+                    name = <backwards compatibility label>
                 ), ...]
             title (string): Figure title,
             xlabel (string): Figure xlabel,
@@ -60,10 +61,12 @@ def plot(traces, **kwargs):
             trace.style = 'o'
         if trace.params == None:
             trace.params = {}
+        if trace.label is None and trace.name is not None:
+            trace.label = trace.name
 
         # main plot
         ax.plot(trace.x, trace.y, trace.style, color=trace.color,
-                 label=trace.name, markersize=trace.markersize, **trace.params)
+                 label=trace.label, markersize=trace.markersize, **trace.params)
 
         # TODO: trendline style params
         # trendline (currently only polynomial approximation)
