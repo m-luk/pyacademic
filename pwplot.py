@@ -31,6 +31,7 @@ def plot(traces, **kwargs):
                     trendline = <trendline polynomial degree>,
                     xerr = <value of x error lines>,
                     yerr = <value of y error lines>,
+                    params = <dict with additional parameteres> 
                 ), ...]
             title (string): Figure title,
             xlabel (string): Figure xlabel,
@@ -57,11 +58,12 @@ def plot(traces, **kwargs):
             return
         if trace.style is None:
             trace.style = 'o'
-
+        if trace.params == None:
+            trace.params = {}
 
         # main plot
         ax.plot(trace.x, trace.y, trace.style, color=trace.color,
-                 label=trace.name, markersize=trace.markersize)
+                 label=trace.name, markersize=trace.markersize, **trace.params)
 
         # TODO: trendline style params
         # trendline (currently only polynomial approximation)
