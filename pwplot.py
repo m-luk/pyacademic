@@ -50,8 +50,6 @@ def plot(traces, **kwargs):
 
     # evaluate traces
     for trace in traces:
-        # print(trace)
-        # trace = trace_dict_fill_empty(trace)
         trace = dotdict(trace)
 
         # if none supply default params
@@ -117,23 +115,3 @@ def plot(traces, **kwargs):
 
     # return figure
     return (fig, ax)
-
-def trace_dict_fill_empty(trace):
-    ''' 
-    Returns trace dict with None filled empty positions, if mandatory arguments
-    not submitted returns False 
-    '''
-    trace_keys = set(trace.keys())
-    keys_mandatory = set(['x', 'y'])
-    keys_additional = [
-        "name", "color", "style", "markersize", "trendline", "xerr", "yerr"
-    ]
-
-    if not trace_keys.issubset(keys_mandatory):
-        return False
-
-    for key in keys_additional:
-        if key not in trace_keys:
-            trace[key] = None
-
-    return trace
