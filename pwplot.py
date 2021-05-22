@@ -38,6 +38,9 @@ def plot(traces, **kwargs):
             legend (bool): Show legend, default False,
             savefig (string): if name provided save to <savefig>.png,
             show (bool): Show figure, default True
+
+        Retruns:
+            Figure (by gcf)
     '''
 
     # evaluate traces
@@ -98,6 +101,11 @@ def plot(traces, **kwargs):
     if 'savefig' in kwargs.keys():
         if kwargs['savefig']:
             plt.savefig('{}.png'.format(kwargs['savefig']))
+
+
+    # TODO: switch all plt. to fig, ax syntax
+    # return figure
+    return plt.gcf()
 
 
 def trace_dict_fill_empty(trace):
