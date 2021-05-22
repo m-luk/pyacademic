@@ -45,6 +45,9 @@ def plot(traces, **kwargs):
             Figure (by gcf)
     '''
 
+    # create plot objects
+    fig, ax = plt.subplots()
+
     # evaluate traces
     for trace in traces:
         # print(trace)
@@ -56,11 +59,7 @@ def plot(traces, **kwargs):
             return
         if trace.style is None:
             trace.style = 'o'
-        if trace.color is None:
-            trace.color = 'tab:blue'
 
-        # create plot objects
-        fig, ax = plt.subplots()
 
         # main plot
         ax.plot(trace.x, trace.y, trace.style, color=trace.color,
