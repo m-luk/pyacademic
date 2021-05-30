@@ -17,20 +17,22 @@ plt.rcParams["font.size"] = 11
 
 def plot(traces, **kwargs):
     '''
-    Basic plot, created from data provided as a list of dictionaries:
+#<Esc>    Basic plot, created from data provided as a list of dictionaries:
 
         Parameters:
             traces (list): List of dicts with plot data and config like:
                 [dict(
                     x = <x values>,
                     y = <y values>,
-                    name = <trace name>,
+                    label = <trace name>,
                     color = <color>
                     style = <basic style such as 'o' or '--'>,
                     markersize = <size of the marker>,
                     trendline = <trendline polynomial degree>,
                     xerr = <value of x error lines>,
                     yerr = <value of y error lines>,
+                    params = <dict with additional parameteres> 
+                    name = <backwards compatibility label>
                 ), ...]
             title (string): Figure title,
             xlabel (string): Figure xlabel,
@@ -39,16 +41,24 @@ def plot(traces, **kwargs):
             ylim (tuple): (y_min, y_max),
             legend (bool): Show legend, default False,
             savefig (string): if path provided save to <savefig> - user specifies extension,
-            show (bool): Show figure, default True
+            show (bool): Show figure, default True,
+            font_size (int): Defines font size
 
         Retruns:
             Figure (by gcf)
     '''
 
+    # change defaults
+    if 'font_size' in kwargs.keys():
+        plt.rcParams["font.size"] = kwargs['font_size']
+    else:
+        plt.rcParams["font.size"] = 11
+
+    # create plot objects
+    fig, ax = plt.subplots()
+
     # evaluate traces
     for trace in traces:
-        # print(trace)
-        # trace = trace_dict_fill_empty(trace)
         trace = dotdict(trace)
 
         # if none supply default params
@@ -56,15 +66,14 @@ def plot(traces, **kwargs):
             return
         if trace.style is None:
             trace.style = 'o'
-        if trace.color is None:
-            trace.color = 'tab:blue'
-
-        # create plot objects
-        fig, ax = plt.subplots()
+        if trace.params == None:
+            trace.params = {}
+        if trace.label is None and trace.name is not None:
+            trace.label = trace.name
 
         # main plot
         ax.plot(trace.x, trace.y, trace.style, color=trace.color,
-                 label=trace.name, markersize=trace.markersize)
+                label=trace.label, markersize=trace.markersize, **trace.params)
 
         # TODO: trendline style params
         # trendline (currently only polynomial approximation)
@@ -108,33 +117,30 @@ def plot(traces, **kwargs):
     # show figure, default no
     if 'show' in kwargs.keys():
         if kwargs['show']:
-           fig.show()
-    
+            fig.show()
+
     # savefig, default no, user provides full path with extension
     if 'savefig' in kwargs.keys():
         if kwargs['savefig']:
             fig.savefig('{}'.format(kwargs['savefig']))
 
-
     # return figure
     return (fig, ax)
 
-def trace_dict_fill_empty(trace):
-    ''' 
-    Returns trace dict with None filled empty positions, if mandatory arguments
-    not submitted returns False 
-    '''
-    trace_keys = set(trace.keys())
-    keys_mandatory = set(['x', 'y'])
-    keys_additional = [
-        "name", "color", "style", "markersize", "trendline", "xerr", "yerr"
-    ]
 
-    if not trace_keys.issubset(keys_mandatory):
-        return False
+def set_size_cm(mpl_fig, width, height):
+    ''' Damns those imperial units '''
+    mpl_fig.set_size_inches(width/2.54, height/2.54)
 
-    for key in keys_additional:
-        if key not in trace_keys:
-            trace[key] = None
 
-    return trace
+# This part is CC BY-SA 3.0
+# From HYRY's answer: https://stackoverflow.com/a/10482477
+def align_yaxis(ax1, v1, ax2, v2):
+    """adjust ax2 ylimit so that v2 in ax2 is aligned to v1 in ax1"""
+    _, y1 = ax1.transData.transform((0, v1))
+    _, y2 = ax2.transData.transform((0, v2))
+    inv = ax2.transData.inverted()
+    _, dy = inv.transform((0, 0)) - inv.transform((0, y1-y2))
+    miny, maxy = ax2.get_ylim()
+    ax2.set_ylim(miny+dy, maxy+dy)
+# end of CC BY-SA 3.0
