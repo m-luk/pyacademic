@@ -17,7 +17,7 @@ plt.rcParams["font.size"] = 11
 
 def plot(traces, **kwargs):
     '''
-    Basic plot, created from data provided as a list of dictionaries:
+#<Esc>    Basic plot, created from data provided as a list of dictionaries:
 
         Parameters:
             traces (list): List of dicts with plot data and config like:
@@ -41,11 +41,18 @@ def plot(traces, **kwargs):
             ylim (tuple): (y_min, y_max),
             legend (bool): Show legend, default False,
             savefig (string): if path provided save to <savefig> - user specifies extension,
-            show (bool): Show figure, default True
+            show (bool): Show figure, default True,
+            font_size (int): Defines font size
 
         Retruns:
             Figure (by gcf)
     '''
+
+    # change defaults
+    if 'font_size' in kwargs.keys():
+        plt.rcParams["font.size"] = kwargs['font_size']
+    else:
+        plt.rcParams["font.size"] = 11
 
     # create plot objects
     fig, ax = plt.subplots()
@@ -66,7 +73,7 @@ def plot(traces, **kwargs):
 
         # main plot
         ax.plot(trace.x, trace.y, trace.style, color=trace.color,
-                 label=trace.label, markersize=trace.markersize, **trace.params)
+                label=trace.label, markersize=trace.markersize, **trace.params)
 
         # TODO: trendline style params
         # trendline (currently only polynomial approximation)
@@ -110,13 +117,30 @@ def plot(traces, **kwargs):
     # show figure, default no
     if 'show' in kwargs.keys():
         if kwargs['show']:
-           fig.show()
-    
+            fig.show()
+
     # savefig, default no, user provides full path with extension
     if 'savefig' in kwargs.keys():
         if kwargs['savefig']:
             fig.savefig('{}'.format(kwargs['savefig']))
 
-
     # return figure
     return (fig, ax)
+
+
+def set_size_cm(mpl_fig, width, height):
+    ''' Damns those imperial units '''
+    mpl_fig.set_size_inches(width/2.54, height/2.54)
+
+
+# This part is CC BY-SA 3.0
+# From HYRY's answer: https://stackoverflow.com/a/10482477
+def align_yaxis(ax1, v1, ax2, v2):
+    """adjust ax2 ylimit so that v2 in ax2 is aligned to v1 in ax1"""
+    _, y1 = ax1.transData.transform((0, v1))
+    _, y2 = ax2.transData.transform((0, v2))
+    inv = ax2.transData.inverted()
+    _, dy = inv.transform((0, 0)) - inv.transform((0, y1-y2))
+    miny, maxy = ax2.get_ylim()
+    ax2.set_ylim(miny+dy, maxy+dy)
+# end of CC BY-SA 3.0
