@@ -1,0 +1,57 @@
+\documentclass[12pt, a4paper, headings=normal]{article}
+\usepackage[polish]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{polski}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{csvsimple}
+\usepackage{float}
+
+\usepackage{geometry}
+\newgeometry{tmargin=2cm, bmargin=2cm, lmargin=2.5cm, rmargin=2.5cm}
+
+\usepackage[font=small]{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{gensymb}
+
+
+
+\setlength{\parindent}{10pt}
+\graphicspath{{../img/}}
+\addto\captionspolish{\renewcommand{\figurename}{Rys.}}
+
+
+% name and title variable definitions
+\newcommand{\className}{PRZEDMIOT}
+\newcommand{\workTitle}{TYTUŁ}
+
+% commands
+\newcommand\reff[1]{Rys. \ref{#1}}
+
+\pagestyle{fancy}
+\rhead[]{Michał Łukaszewicz (297696)}
+\lhead[]{\workTitle}
+
+\begin{document}
+
+\input{titlepage.tex}
+\setcounter{figure}{0}
+
+\newpage
+
+\tableofcontents
+
+\section{Oświadczenie o samodzielności wykonania}
+
+\textbf{Oświadczam} że niniejsza praca zaliczeniowa stanowiąca podstawę obecny
+efektów uczenia się z przedmiotu \textit{\className} została przeze
+mnie wykonana samodzielnie.
+
+\bigskip
+\hfill Michał Łukaszewicz
+
+\hfill \textit{297696}
+
+\end{document}

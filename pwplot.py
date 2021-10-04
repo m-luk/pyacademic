@@ -4,7 +4,7 @@
 import pandas as pd
 import numpy as np
 from numpy.polynomial import Polynomial
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import matplotlib as mpl
 from pyutils import dotdict
 
