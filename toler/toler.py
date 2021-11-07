@@ -2,14 +2,16 @@
 IT tolerance calculating script with CLI
 """
 
-import pandas as pd
-import numpy as np
+import os
+import shutil
 from math import *
 from os import system
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 import tabulate as tab
 from art import *
-import os, shutil
-from pathlib import Path
 
 # path to tolerance table
 IT_PATH = Path(os.path.realpath(__file__)).parent / "it.csv"

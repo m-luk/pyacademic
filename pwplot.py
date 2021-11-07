@@ -1,11 +1,12 @@
 # pwplot.py - quick plotting utilities for my WUT needs.
 # github.com/m-luk - 2021
 
-import pandas as pd
-import numpy as np
-from numpy.polynomial import Polynomial
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from numpy.polynomial import Polynomial
+
 from pyutils import dotdict
 
 # matplotlib style
