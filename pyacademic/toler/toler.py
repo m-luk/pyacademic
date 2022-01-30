@@ -3,14 +3,11 @@ IT tolerance calculating script with CLI
 """
 
 import os
-import shutil
 from math import *
 from os import system
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-import tabulate as tab
 from art import *
 
 # path to tolerance table
@@ -24,9 +21,7 @@ its.remove("max")
 
 
 def get_toler(dim, it):
-    ''' 
-    Returns International Tolerance value for given dimension(dim) and class(it)
-    '''
+    ''' Returns International Tolerance value for given dimension(dim) and class(it)'''
     # check if it in data
     if it not in its:
         print("#### IT not supported ####\n")
