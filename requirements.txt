@@ -6,3 +6,4 @@ pint
 scipy
 tabulate
 art
+inquirer
