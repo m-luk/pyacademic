@@ -49,8 +49,7 @@ def get_toler(dim, it):
     return round(toler.to_list()[0], 5)
 
 
-if __name__ == "__main__":
-
+def main():
     # clear console
     _ = system("cls")
 
@@ -58,7 +57,7 @@ if __name__ == "__main__":
     print(text2art("TOLER.PY"))
 
     # program loop
-    while(1):
+    while True:
         # get dimension from user
         dim = input("\nInsert dimension: ").strip()
 
@@ -81,3 +80,7 @@ if __name__ == "__main__":
             ))
         else:
             print("\nUnable to calculate, enter values again\n")
+
+
+if __name__ == "__main__":
+    main()
