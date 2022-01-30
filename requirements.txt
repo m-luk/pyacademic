@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+plotly
+pint
+scipy
+tabulate
+art
+inquirer
