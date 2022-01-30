@@ -9,9 +9,10 @@ from pathlib import Path
 
 import pandas as pd
 from art import *
+from . import DATA_DIR
 
 # path to tolerance table
-IT_PATH = Path(os.path.realpath(__file__)).parent / "it.csv"
+IT_PATH = DATA_DIR / "it.csv"
 
 # data preparation
 df = pd.read_csv(IT_PATH)

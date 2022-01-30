@@ -17,7 +17,7 @@ setup(
     entry_points={
         "console_scripts": [
             "mthread=pyacademic.mech.mthread:main",
-            "toler=pyacademic.toler.toler:main"
+            "toler=pyacademic.mech.toler:main"
         ],
     },
 )
