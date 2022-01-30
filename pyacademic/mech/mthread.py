@@ -1,19 +1,16 @@
 import argparse
 import os
 import sys
-from pathlib import Path
 
 import pandas as pd
 from pandas import DataFrame
-
-SCRIPT_PATH = Path(os.path.realpath(__file__))
-SCRIPT_DIR = SCRIPT_PATH.parent
+from . import DATA_DIR
 
 
 def load_threads():
     """ loads threads database to global scope """
     global threads_df
-    threads_df = pd.read_csv(SCRIPT_DIR / "mthreads.csv", index_col=0,)
+    threads_df = pd.read_csv(DATA_DIR / "mthreads.csv", index_col=0,)
 
 
 def match_thread_min_diam(diam: float, give_n: int = 1) -> DataFrame:
